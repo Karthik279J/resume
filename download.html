@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>iResume - Professional Download</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        body { background: linear-gradient(135deg, #d4e4f7 0%, #ffffff 100%); min-height: 100vh; font-family: -apple-system, sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 30px; }
+        
+        /* These styles are used ONLY inside the generated PDF */
+        .pdf-container { font-family: 'Helvetica', 'Arial', sans-serif; color: #333; line-height: 1.5; }
+        .section-title { font-weight: bold; text-transform: uppercase; border-bottom: 2px solid #444; margin-bottom: 10px; margin-top: 20px; }
+    </style>
+</head>
+<body class="p-10">
+    <div class="max-w-3xl mx-auto text-center">
+        <header class="mb-10">
+            <h1 class="text-4xl font-black">Ready to Download</h1>
+            <p class="text-gray-500">Your data has been transformed into your selected template.</p>
+        </header>
+
+        <main class="glass p-12 shadow-2xl">
+            <div class="mb-10 p-6 bg-white rounded-2xl border border-gray-100 shadow-inner">
+                <p class="text-sm font-bold text-blue-600 uppercase tracking-widest mb-2">Selected Preview</p>
+                <div id="theme-indicator" class="text-2xl font-bold italic text-gray-800">...</div>
+            </div>
+
+            <button onclick="generateProfessionalPDF()" class="w-full py-5 bg-black text-white rounded-2xl font-bold text-xl shadow-xl hover:scale-[1.02] transition-transform">
+                Generate & Save PDF
+            </button>
+            
+            <button onclick="window.location.href='theme.html'" class="mt-4 w-full py-4 text-gray-500 font-bold hover:text-black">
+                ← Change Theme
+            </button>
+        </main>
+
+        <footer class="mt-16 text-sm text-gray-400">
+            Designed by J Karthik • 8341276449
+        </footer>
+    </div>
+
+    <script>
+        const data = JSON.parse(localStorage.getItem('resumeData'));
+        const theme = localStorage.getItem('selectedTheme') || 'minimalist';
+        document.getElementById('theme-indicator').innerText = theme.toUpperCase();
+
+        function generateProfessionalPDF() {
+            if(!data) return alert("No data found!");
+
+            let templateHTML = "";
+
+            // TEMPLATE 1: Modern Sidebar (Based on Image 1 & 2)
+            if (theme === 'corporate') {
+                templateHTML = `
+                <div style="display: flex; min-height: 1000px; background: white;">
+                    <div style="width: 30%; background: #f4f7f9; padding: 30px; border-right: 1px solid #ddd;">
+                        <h2 style="font-size: 14px; color: #007AFF;">CONTACT</h2>
+                        <p style="font-size: 11px;">${data.phone}<br>${data.email}<br>${data.address}</p>
+                        
+                        <h2 style="font-size: 14px; color: #007AFF; margin-top: 30px;">SKILLS</h2>
+                        <p style="font-size: 11px;">${data.tech.split(',').join('<br>')}</p>
+                        
+                        <h2 style="font-size: 14px; color: #007AFF; margin-top: 30px;">LANGUAGES</h2>
+                        <p style="font-size: 11px;">${data.langs}</p>
+                    </div>
+                    <div style="width: 70%; padding: 40px;">
+                        <h1 style="font-size: 32px; margin: 0; text-transform: uppercase;">${data.name}</h1>
+                        <hr style="border: 2px solid #333; width: 50px; margin: 20px 0;">
+                        
+                        <h3 style="background: #333; color: white; padding: 5px 10px; display: inline-block;">EDUCATION</h3>
+                        <p><b>Degree:</b> ${data.scoreDeg}<br><b>Intermediate:</b> ${data.score12}<br><b>High School:</b> ${data.score10}</p>
+                        
+                        <h3 style="background: #333; color: white; padding: 5px 10px; display: inline-block; margin-top: 20px;">CERTIFICATIONS</h3>
+                        <p>${data.certs}</p>
+                    </div>
+                </div>`;
+            } 
+            
+            // TEMPLATE 2: Clean Minimal (Based on Image 3/Jake Haskins)
+            else {
+                templateHTML = `
+                <div style="padding: 50px; background: white;">
+                    <div style="border-bottom: 2px solid #000; padding-bottom: 20px; margin-bottom: 30px;">
+                        <h1 style="font-size: 40px; font-weight: 900; margin: 0;">${data.name}</h1>
+                        <p style="color: #666;">${data.address} | ${data.phone} | ${data.email}</p>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 40px;">
+                        <div>
+                            <h2 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">EDUCATION</h2>
+                            <p><b>University/College:</b> Graduated with ${data.scoreDeg}</p>
+                            <p><b>Schooling:</b> 12th: ${data.score12} | 10th: ${data.score10}</p>
+                            
+                            <h2 style="border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px;">CERTIFICATIONS</h2>
+                            <p>${data.certs}</p>
+                        </div>
+                        <div>
+                            <h2 style="border-bottom: 1px solid #eee; padding-bottom: 5px;">TECHNICAL SKILLS</h2>
+                            <ul style="padding-left: 15px;">${data.tech.split(',').map(s => `<li>${s}</li>`).join('')}</ul>
+                            
+                            <h2 style="border-bottom: 1px solid #eee; padding-bottom: 5px; margin-top: 30px;">SOFT SKILLS</h2>
+                            <p>${data.soft}</p>
+                        </div>
+                    </div>
+                </div>`;
+            }
+
+            const opt = {
+                margin: 0,
+                filename: data.name + '_Resume.pdf',
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 3, useCORS: true },
+                jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+            };
+
+            html2pdf().from(templateHTML).set(opt).save();
+        }
+    </script>
+</body>
+</html>

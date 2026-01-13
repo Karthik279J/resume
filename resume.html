@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iResume - Data Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { background: linear-gradient(135deg, #d4e4f7 0%, #ffffff 100%); min-height: 100vh; font-family: -apple-system, sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 30px; }
+        input, select { background: rgba(255, 255, 255, 0.8) !important; border: 1px solid rgba(0,0,0,0.05) !important; border-radius: 14px !important; }
+        .skill-tag { background: #007AFF; color: white; padding: 4px 12px; border-radius: 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 5px; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+    <div class="max-w-3xl mx-auto">
+        <header class="flex justify-between items-center mb-8 px-4">
+            <h1 class="text-3xl font-black text-gray-900">iResume</h1>
+            <div class="glass px-5 py-2 text-xs font-bold text-blue-600 uppercase">Step 1/4</div>
+        </header>
+
+        <main class="glass p-8 shadow-xl">
+            <h2 class="text-2xl font-bold mb-6">Profile Details</h2>
+            <form id="resumeForm" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <input type="text" id="name" placeholder="Full Name" required class="p-4 outline-none focus:ring-2 ring-blue-400">
+                <input type="tel" id="phone" placeholder="Phone Number" required class="p-4 outline-none">
+                <input type="email" id="email" placeholder="Email Address" required class="p-4 outline-none">
+                <input type="text" id="address" placeholder="City, Country" class="p-4 outline-none">
+                
+                <div class="md:col-span-2 grid grid-cols-3 gap-4">
+                    <input type="text" id="score10" placeholder="10th %" class="p-4">
+                    <input type="text" id="score12" placeholder="Inter %" class="p-4">
+                    <input type="text" id="scoreDeg" placeholder="Degree CGPA" class="p-4">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase ml-2">Technical Skills</label>
+                    <select id="techDropdown" onchange="addSkill('techDropdown', 'tech-list')" class="w-full p-4 outline-none">
+                        <option value="">Select Skills...</option>
+                        <option>Python</option><option>Java</option><option>HTML/CSS</option><option>SQL</option>
+                    </select>
+                    <div id="tech-list" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <label class="text-xs font-bold text-gray-400 uppercase ml-2">Soft Skills</label>
+                    <select id="softDropdown" onchange="addSkill('softDropdown', 'soft-list')" class="w-full p-4 outline-none">
+                        <option value="">Select Skills...</option>
+                        <option>Leadership</option><option>Communication</option><option>Teamwork</option>
+                    </select>
+                    <div id="soft-list" class="flex flex-wrap gap-2 mt-2"></div>
+                </div>
+
+                <input type="text" id="certs" placeholder="Certifications" class="p-4 md:col-span-2">
+                <input type="text" id="langs" placeholder="Languages" class="p-4">
+                <input type="text" id="hobbies" placeholder="Hobbies" class="p-4">
+                
+                <button type="button" onclick="saveAndNext()" class="md:col-span-2 mt-5 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg">Go to Theme Selection</button>
+            </form>
+        </main>
+    </div>
+
+    <script>
+        function addSkill(dropdownId, listId) {
+            const select = document.getElementById(dropdownId);
+            const container = document.getElementById(listId);
+            if(!select.value) return;
+            const tag = document.createElement('div');
+            tag.className = 'skill-tag';
+            tag.innerHTML = `${select.value} <span class="cursor-pointer" onclick="this.parentElement.remove()">×</span>`;
+            container.appendChild(tag);
+            select.value = "";
+        }
+
+        function saveAndNext() {
+            const data = {
+                name: document.getElementById('name').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                address: document.getElementById('address').value,
+                score10: document.getElementById('score10').value,
+                score12: document.getElementById('score12').value,
+                scoreDeg: document.getElementById('scoreDeg').value,
+                tech: document.getElementById('tech-list').innerText.replace(/×/g, ''),
+                soft: document.getElementById('soft-list').innerText.replace(/×/g, ''),
+                certs: document.getElementById('certs').value,
+                langs: document.getElementById('langs').value,
+                hobbies: document.getElementById('hobbies').value
+            };
+            localStorage.setItem('resumeData', JSON.stringify(data));
+            window.location.href = 'theme.html';
+        }
+    </script>
+</body>
+</html>
